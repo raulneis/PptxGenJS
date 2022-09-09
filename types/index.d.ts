@@ -1536,6 +1536,11 @@ declare namespace PptxGenJS {
 		 */
 		autoPageCharWeight?: number
 		/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+		autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
+		/**
 		 * Auto-paging line weight
 		 * - adjusts how many lines are used before slides wrap
 		 * - range: -1.0 to 1.0
@@ -1591,6 +1596,11 @@ declare namespace PptxGenJS {
 		 */
 		autoPageCharWeight?: number
 		/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+		autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
+		/**
 		 * Auto-paging line weight
 		 * - adjusts how many lines are used before slides wrap
 		 * - range: -1.0 to 1.0
@@ -1643,6 +1653,11 @@ declare namespace PptxGenJS {
 		 * @example 0.5 // lines are longer (increases the number of characters that can fit on a given line)
 		 */
 		autoPageCharWeight?: number
+		/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+		autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
 		/**
 		 * Auto-paging line weight
 		 * - adjusts how many lines are used before slides wrap

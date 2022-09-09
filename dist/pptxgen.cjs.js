@@ -1,4 +1,4 @@
-/* PptxGenJS 3.12.0-beta @ 2022-09-06T22:10:55.132Z */
+/* PptxGenJS 3.12.0-beta @ 2022-09-09T01:58:21.796Z */
 'use strict';
 
 var JSZip = require('jszip');
@@ -999,8 +999,16 @@ function parseTextToLines(cell, colWidth, verbose) {
         var lineCells = [];
         var strCurrLine = '';
         line.forEach(function (word) {
+            var _a, _b;
             // A: create new line when horizontal space is exhausted
-            if (strCurrLine.length + word.text.length > CPL) {
+            var fits = true;
+            if ((_a = cell.options) === null || _a === void 0 ? void 0 : _a.autoPageCharWeightFn) {
+                fits = cell.options.autoPageCharWeightFn(strCurrLine + word.text, (colWidth / ONEPT) * EMU, ((_b = cell.options) === null || _b === void 0 ? void 0 : _b.fontSize) ? cell.options.fontSize : DEF_FONT_SIZE, CPL);
+            }
+            else {
+                fits = strCurrLine.length + word.text.length <= CPL;
+            }
+            if (!fits) {
                 // if (verbose) console.log(`STEP 4: New line added: (${strCurrLine.length} + ${word.text.length} > ${CPL})`);
                 parsedLines.push(lineCells);
                 lineCells = [];
@@ -1213,7 +1221,7 @@ function getSlidesForTableRows(tableRows, tableProps, presLayout, masterSlide) {
                 _lines: null,
                 _lineHeight: inch2Emu(((((_a = cell.options) === null || _a === void 0 ? void 0 : _a.fontSize) ? cell.options.fontSize : tableProps.fontSize ? tableProps.fontSize : DEF_FONT_SIZE) *
                     (LINEH_MODIFIER + (tableProps.autoPageLineWeight ? tableProps.autoPageLineWeight : 0))) /
-                    100),
+                    72),
                 text: [],
                 options: cell.options,
             };
@@ -1222,6 +1230,10 @@ function getSlidesForTableRows(tableRows, tableProps, presLayout, masterSlide) {
                 newCell._lineHeight = 0;
             // E-2: The parseTextToLines method uses `autoPageCharWeight`, so inherit from table options
             newCell.options.autoPageCharWeight = tableProps.autoPageCharWeight ? tableProps.autoPageCharWeight : null;
+            newCell.options.autoPageCharWeightFn = tableProps.autoPageCharWeightFn ? tableProps.autoPageCharWeightFn : null;
+            if (!newCell.options.fontSize) {
+                newCell.options.fontSize = tableProps.fontSize ? tableProps.fontSize : null;
+            }
             // E-3: **MAIN** Parse cell contents into lines based upon col width, font, etc
             var totalColW = tableProps.colW[iCell];
             if (cell.options.colspan && Array.isArray(tableProps.colW)) {
@@ -1302,7 +1314,6 @@ function getSlidesForTableRows(tableRows, tableProps, presLayout, masterSlide) {
                 currTableRow = [];
                 row.forEach(function (cell) { return currTableRow.push({ _type: SLIDE_OBJECT_TYPES.tablecell, text: [], options: cell.options }); });
                 // E: Calc usable vertical space/table height now as we may still be in the same row and code above ("C: Calc usable vertical space/table height.") calc may now be invalid
-                calcSlideTabH();
                 emuTabCurrH += maxCellMarTopEmu + maxCellMarBtmEmu; // Start row height with margins
                 if (tableProps.verbose)
                     console.log("| SLIDE [".concat(tableRowSlides.length, "]: emuSlideTabH ...... = ").concat((emuSlideTabH / EMU).toFixed(1), " "));
@@ -1321,6 +1332,7 @@ function getSlidesForTableRows(tableRows, tableProps, presLayout, masterSlide) {
                         newTableRowSlide.rows.push(newHeadRow);
                         emuTabCurrH += maxLineHeight; // TODO: what about margins? dont we need to include cell margin in line height?
                     });
+                    calcSlideTabH();
                 }
                 // WIP: NEW: TEST THIS!!
                 tgtCell = currTableRow[currCellIdx];

@@ -721,6 +721,11 @@ export interface TableToSlidesProps extends TableProps {
 	 */
 	autoPageCharWeight?: number
 	/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+	autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
+	/**
 	 * Auto-paging line weight
 	 * - adjusts how many lines are used before slides wrap
 	 * - range: -1.0 to 1.0
@@ -766,6 +771,11 @@ export interface TableToSlidesProps extends TableProps {
 	newSlideStartY?: number
 }
 export interface TableCellProps extends TextBaseProps {
+	/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+	autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
 	/**
 	 * Auto-paging character weight
 	 * - adjusts how many characters are used before lines wrap
@@ -828,6 +838,11 @@ export interface TableProps extends PositionProps, TextBaseProps, ObjectNameProp
 	 * @example 0.5 // lines are longer (increases the number of characters that can fit on a given line)
 	 */
 	autoPageCharWeight?: number
+	/**
+	 * Auto-paging character weight function
+	 * Returns true if chars fit within maxWidth
+	 */
+	autoPageCharWeightFn?: (chars: string, maxWidth: number, fontSize: number, CPL: number) => boolean
 	/**
 	 * Auto-paging line weight
 	 * - adjusts how many lines are used before slides wrap

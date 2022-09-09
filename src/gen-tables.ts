@@ -140,7 +140,13 @@ function parseTextToLines (cell: TableCell, colWidth: number, verbose?: boolean)
 
 		line.forEach(word => {
 			// A: create new line when horizontal space is exhausted
-			if (strCurrLine.length + word.text.length > CPL) {
+			let fits = true
+			if (cell.options?.autoPageCharWeightFn) {
+				fits = cell.options.autoPageCharWeightFn(strCurrLine + word.text, (colWidth / ONEPT) * EMU, cell.options?.fontSize ? cell.options.fontSize : DEF_FONT_SIZE, CPL)
+			} else {
+				fits = strCurrLine.length + word.text.length <= CPL
+			}
+			if (!fits)  {
 				// if (verbose) console.log(`STEP 4: New line added: (${strCurrLine.length} + ${word.text.length} > ${CPL})`);
 				parsedLines.push(lineCells)
 				lineCells = []
@@ -339,7 +345,7 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 				_lineHeight: inch2Emu(
 					((cell.options?.fontSize ? cell.options.fontSize : tableProps.fontSize ? tableProps.fontSize : DEF_FONT_SIZE) *
 						(LINEH_MODIFIER + (tableProps.autoPageLineWeight ? tableProps.autoPageLineWeight : 0))) /
-						100
+						72
 				),
 				text: [],
 				options: cell.options,
@@ -350,6 +356,10 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 
 			// E-2: The parseTextToLines method uses `autoPageCharWeight`, so inherit from table options
 			newCell.options.autoPageCharWeight = tableProps.autoPageCharWeight ? tableProps.autoPageCharWeight : null
+			newCell.options.autoPageCharWeightFn = tableProps.autoPageCharWeightFn ? tableProps.autoPageCharWeightFn : null
+			if (!newCell.options.fontSize) {
+				newCell.options.fontSize = tableProps.fontSize ? tableProps.fontSize : null
+			}
 
 			// E-3: **MAIN** Parse cell contents into lines based upon col width, font, etc
 			let totalColW = tableProps.colW[iCell]
@@ -438,7 +448,6 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 				row.forEach(cell => currTableRow.push({ _type: SLIDE_OBJECT_TYPES.tablecell, text: [], options: cell.options }))
 
 				// E: Calc usable vertical space/table height now as we may still be in the same row and code above ("C: Calc usable vertical space/table height.") calc may now be invalid
-				calcSlideTabH()
 				emuTabCurrH += maxCellMarTopEmu + maxCellMarBtmEmu // Start row height with margins
 				if (tableProps.verbose) console.log(`| SLIDE [${tableRowSlides.length}]: emuSlideTabH ...... = ${(emuSlideTabH / EMU).toFixed(1)} `)
 
@@ -457,6 +466,8 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 						newTableRowSlide.rows.push(newHeadRow)
 						emuTabCurrH += maxLineHeight // TODO: what about margins? dont we need to include cell margin in line height?
 					})
+
+					calcSlideTabH()
 				}
 
 				// WIP: NEW: TEST THIS!!
