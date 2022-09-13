@@ -370,6 +370,7 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 			// E-4: Create lines based upon available column width
 			newCell._lines = parseTextToLines(cell, totalColW, false)
 
+			newCell._lineHeight *= 0.85
 			// E-5: Add cell to array
 			rowCellLines.push(newCell)
 		})
@@ -487,12 +488,12 @@ export function getSlidesForTableRows (tableRows: TableCell[][] = [], tableProps
 			// 5: increase table height by the curr line height (if we're on the last column)
 			if (currCellIdx === rowCellLines.length - 1) emuTabCurrH += emuLineMaxH
 
-			// 6: advance column/cell index (or circle back to first one to continue adding lines)
-			currCellIdx = currCellIdx < rowCellLines.length - 1 ? currCellIdx + 1 : 0
-
 			// 7: done?
 			const brent = rowCellLines.map(cell => cell._lines.length).reduce((prev, next) => prev + next)
-			if (brent === 0) isDone = true
+			if (brent === 0 && currCellIdx >= rowCellLines.length - 1) isDone = true
+
+			// 6: advance column/cell index (or circle back to first one to continue adding lines)
+			currCellIdx = currCellIdx < rowCellLines.length - 1 ? currCellIdx + 1 : 0
 		}
 
 		// F: Flush/capture row buffer before it resets at the top of this loop
