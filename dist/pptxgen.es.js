@@ -1,4 +1,4 @@
-/* PptxGenJS 3.12.0-beta @ 2022-09-13T19:05:26.820Z */
+/* PptxGenJS 3.13.0-bla5 @ 2022-11-09T21:16:45.416Z */
 import JSZip from 'jszip';
 
 /******************************************************************************
@@ -6013,7 +6013,7 @@ function makeChartType(chartType, data, opts, valAxisId, catAxisId, isMultiTypeC
                 strXml += '    <c:showVal val="' + (opts.showValue ? '1' : '0') + '"/>';
                 strXml += '    <c:showCatName val="' + (opts.showLabel ? '1' : '0') + '"/>';
                 strXml += '    <c:showSerName val="' + (opts.showSerName ? '1' : '0') + '"/>';
-                strXml += '    <c:showPercent val="' + (opts.showPercent ? '1' : '0') + '"/>';
+                strXml += '    <c:showPercent val="' + (optsChartData.values[idx] < 0.02 ? '0' : opts.showPercent ? '1' : '0') + '"/>';
                 strXml += '    <c:showBubbleSize val="0"/>';
                 strXml += '  </c:dLbl>';
             });
