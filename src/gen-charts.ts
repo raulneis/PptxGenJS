@@ -1558,7 +1558,7 @@ function makeChartType (chartType: CHART_NAME, data: IOptsChartData[], opts: ICh
 				strXml += '    <c:showVal val="' + (opts.showValue ? '1' : '0') + '"/>'
 				strXml += '    <c:showCatName val="' + (opts.showLabel ? '1' : '0') + '"/>'
 				strXml += '    <c:showSerName val="' + (opts.showSerName ? '1' : '0') + '"/>'
-				strXml += '    <c:showPercent val="' + (opts.showPercent ? '1' : '0') + '"/>'
+				strXml += '    <c:showPercent val="' + (optsChartData.values[idx] < 0.02 ? '0' : opts.showPercent ? '1' : '0') + '"/>'
 				strXml += '    <c:showBubbleSize val="0"/>'
 				strXml += '  </c:dLbl>'
 			})
